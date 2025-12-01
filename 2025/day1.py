@@ -16,7 +16,11 @@ _start_time = time.time()
 data = (puzzle.examples[EXAMPLE_IDX] if EXAMPLE_IDX is not None else puzzle).input_data
 if EXAMPLE_IDX == 0:
     # Override data if needed
-    # data = """REPLACE_ME"""
+    data = """L1000
+R10
+R100
+R40
+L1"""
     pass
 
 print(f"Puzzle #{puzzle.day}", file=stderr)
@@ -33,11 +37,17 @@ else:
 result = 0
 dial = 50
 for line in data.splitlines():
-    val = int(line[1:]) * (-1 if line[0] == 'R' else 1)
-    dial += val
-    dial %= 100
-    if dial == 0:
-        result += 1
+    val = int(line[1:])
+    full_rotations = abs(val) // 100
+    val %= 100
+
+    positive = -1 if line[0] == 'L' else 1
+    dial += val * positive
+
+    if dial > 99 or dial <= 0 or full_rotations:
+        result += max(1, full_rotations)
+
+    dial = (dial + 100) % 100
 
 #################################################################
 # No changes after this line
