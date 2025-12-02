@@ -16,7 +16,7 @@ _start_time = time.time()
 data = (puzzle.examples[EXAMPLE_IDX] if EXAMPLE_IDX is not None else puzzle).input_data
 if EXAMPLE_IDX == 0:
     # Override data if needed
-    # data = """REPLACE_ME"""
+    #data = """12121212-12341238"""
     pass
 
 print(f"Puzzle #{puzzle.day}", file=stderr)
@@ -34,9 +34,29 @@ result = 0
 for line in data.split(","):
     first_id, last_id = [int(x) for x in line.split("-")]
     for i in range(first_id, last_id + 1):
+        if i < 10:
+            continue
         s = str(i)
-        if len(s) % 2 == 0 and s[:len(s) // 2] == s[len(s) // 2:]:
+        # Only handle prime ones
+        # 1 time
+        if len(set(s)) == 1:
             result += i
+            print(i)
+            continue
+        
+        for prime in [2, 3, 5, 7, 9, 11, 13, 17, 19]:
+            if len(s) % prime != 0:
+                continue
+            slices = set()
+            len_slice = len(s) // prime
+            for idx in range(prime):
+                low = idx * len_slice
+                high = (idx + 1) * len_slice
+                slices.add(s[low:high])
+            if len(slices) == 1:
+                print(i, prime)
+                result += i
+                break
 
 #################################################################
 # No changes after this line
