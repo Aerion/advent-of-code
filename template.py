@@ -10,7 +10,7 @@ from sys import stderr
 from typing import Optional
 import time
 
-EXAMPLE_IDX = None
+EXAMPLE_IDX = 0
 _start_time = time.time()
 
 data = (puzzle.examples[EXAMPLE_IDX] if EXAMPLE_IDX is not None else puzzle).input_data
