@@ -16,3 +16,19 @@
 - Read the problem statement in its entirety
 - Use simple examples to debug issues
 - Know that [python modulo behaves](https://stackoverflow.com/questions/3883004/how-does-the-modulo-operator-work-on-negative-numbers-in-python) in a different way than other languages
+
+# Day 2
+
+## Part 1
+
+N/A
+
+## Part 2
+
+- Lost too much time trying to get the boundaries of the split
+- Didn't take into account the single digits number, which impacted the end result
+
+## Conclusions
+
+- It's better to spend 1 min thinking properly about array indexes than to spend 5 mins down the line trying to make working wrong ones defined in 2s
+- Think about extreme edge cases: here I was doing tunnel vision and missed the single digits that were the cause for the bad result
