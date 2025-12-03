@@ -32,3 +32,18 @@ N/A
 
 - It's better to spend 1 min thinking properly about array indexes than to spend 5 mins down the line trying to make working wrong ones defined in 2s
 - Think about extreme edge cases: here I was doing tunnel vision and missed the single digits that were the cause for the bad result
+
+# Day 3
+
+## Part 1
+
+- Initial implementation was flawed because it considered it as just taking the 2 max values of the array
+
+## Part 2
+
+- The range high range conditions could be improved in legibility rather than being the result of 4 operands `len(bank) - REQUIRED_BATTERY_COUNT + battery_idx + 1`
+
+## Conclusions
+
+- Read the examples a second time to make sure to understand what's being asked
+- Add a comment or use intermediate variables for conditions that end up being complex due to variables count
