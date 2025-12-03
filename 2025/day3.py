@@ -30,19 +30,23 @@ else:
 # No changes before this line
 #################################################################
 
+REQUIRED_BATTERY_COUNT = 12
+
 result = 0
 for line in data.splitlines():
     bank = [int(x) for x in line]
 
-    idx_max_first_digit = 0
-    for i in range(len(bank) - 1):
-        if bank[i] > bank[idx_max_first_digit]:
-            idx_max_first_digit = i
-    
-    first_digit = bank[idx_max_first_digit]
-    second_digit = max(bank[idx_max_first_digit + 1:])
+    val = 0
+    start_range = 0
+    for battery_idx in range(REQUIRED_BATTERY_COUNT):
+        idx_max_digit = start_range
+        for i in range(start_range, len(bank) - REQUIRED_BATTERY_COUNT + battery_idx + 1):
+            if bank[i] > bank[idx_max_digit]:
+                idx_max_digit = i
+        val *= 10
+        val += bank[idx_max_digit]
+        start_range = idx_max_digit + 1
 
-    val = first_digit * 10 + second_digit
     print(line, val)
     result += val
 
