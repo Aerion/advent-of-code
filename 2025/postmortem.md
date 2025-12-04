@@ -47,3 +47,18 @@ N/A
 
 - Read the examples a second time to make sure to understand what's being asked
 - Add a comment or use intermediate variables for conditions that end up being complex due to variables count
+
+# Day 4
+
+## Part 1
+
+N/A
+
+## Part 2
+
+- Spent a bit of time trying to think about a better solution than the one being displayed in the problem statement, but wasn't needed
+- Code is messy (grid, new_grid, duplication of lots of code, is_valid with different types)
+
+## Conclusions
+
+N/A
