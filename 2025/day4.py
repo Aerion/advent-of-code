@@ -32,6 +32,10 @@ else:
 
 
 result = 0
+initial_roll_count = 0
+for char in data:
+    if char == "@":
+        initial_roll_count += 1
 grid = data.splitlines()
 
 directions = [
@@ -44,31 +48,59 @@ R = len(grid)
 C = len(grid[0])
 MAX_ROLLS = 4
 
-def is_roll(r, c):
-    return 0 <= r < R and 0 <= c < C and grid[r][c] == '@'
-    
+def is_roll(r, c, new):
+    return 0 <= r < R and 0 <= c < C and (grid[r][c] == '@' or (new and grid[r][c] > 0))
 
+def print_grid():
+    for row in grid:
+        print("".join((str(x) for x in row)))
+
+new_grid = []
 for r in range(R):
+    new_grid.append([])
     for c in range(C):
-        if not is_roll(r, c):
-            print('.', end='')
+        if not is_roll(r, c, False):
+            new_grid[r].append(0)
             continue
 
         rolls_count = 0
         for direction in directions:
             new_r = direction[0] + r
             new_c = direction[1] + c
-            if is_roll(new_r, new_c):
+            if is_roll(new_r, new_c, False):
                 rolls_count += 1
-            if rolls_count > MAX_ROLLS:
-                break
-        
-        print(rolls_count, end='')
-        if rolls_count < MAX_ROLLS:
-            result += 1
-    print()
-    
 
+        new_grid[r].append(rolls_count)
+
+grid = new_grid
+print_grid()
+
+changed = None
+while changed != False:
+    changed = False
+    for r in range(R):
+        for c in range(C):
+            if not is_roll(r, c, True):
+                continue
+
+            if grid[r][c] < MAX_ROLLS:
+                for direction in directions:
+                    new_r = direction[0] + r
+                    new_c = direction[1] + c
+                    if is_roll(new_r, new_c, True):
+                        grid[new_r][new_c] -= 1
+                grid[r][c] = 0
+                changed = True
+    print("-------")
+print_grid()
+
+roll_count = 0
+for r in range(R):
+    for c in range(C):
+        if grid[r][c] > 0:
+            roll_count += 1
+
+result = initial_roll_count - roll_count
 
 #################################################################
 # No changes after this line
