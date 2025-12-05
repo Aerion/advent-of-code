@@ -51,18 +51,28 @@ def parse_input():
     return ranges, ids
 
 def simplify_ranges(ranges: list[Range]):
-    return list(sorted(ranges, key=lambda range: range.low))
+    output: list[Range] = []
+    for candidate_range in sorted(ranges, key=lambda range: range.low):
+        if not output:
+            output.append(candidate_range)
+            continue
+        if candidate_range.low <= output[-1].high:
+            # The latest range can still be extended
+            output[-1].high = max(candidate_range.high, output[-1].high)
+            continue
+
+        # No overlap with the existing one
+        output.append(candidate_range)
+
+    return output
 
 ranges, ids = parse_input()
 ranges = simplify_ranges(ranges)
+print(ranges)
 
 result = 0
-for id in ids:
-    for range in ranges:
-        if range.low <= id <= range.high:
-            print(id)
-            result += 1
-            break
+for range in ranges:
+    result += range.high - range.low + 1
 
 #################################################################
 # No changes after this line
