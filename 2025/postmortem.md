@@ -62,3 +62,17 @@ N/A
 ## Conclusions
 
 N/A
+
+# Day 5
+
+## Part 1
+
+- Having separate methods simplify readability
+
+## Part 2
+
+- Didn't think about all the edge cases right away
+
+## Conclusions
+
+N/A
