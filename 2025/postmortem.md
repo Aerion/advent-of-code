@@ -76,3 +76,20 @@ N/A
 ## Conclusions
 
 N/A
+
+# Day 6
+
+## Part 1
+
+N/A
+
+## Part 2
+
+- Overlooked the fact that the space padding was important, which wasted time on trying to fit one right aligned example, then understanding a left aligned one
+- Spent too much time trying to work on the part1 algorithm
+- Was way simpler to start over as it's natural to process column by column and handling the padding for part2
+
+## Conclusions
+
+- Make sure to understand the edge cases that are presented in the example
+- Take a step back if stuck, clearing the existing implementation isn't a bad thing
