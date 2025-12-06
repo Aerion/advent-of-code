@@ -31,19 +31,52 @@ else:
 #################################################################
 
 lines = data.splitlines()
-grid = [[int(x) for x in line.split()] for line in lines[:-1]]
-R = len(grid)
-C = len(grid[0])
+R = len(lines) - 1
+C = len(lines[-1])
 
+operator = None
+operands = []
 result = 0
-for c, operator in enumerate(lines[-1].split()):
-    val = grid[0][c]
-    for r in range(1, R):
+
+def process_operation():
+    global result
+    global operands
+    global operator
+
+    print(operands)
+    val = operands[0]
+    for elt in operands[1:]:
         if operator == "*":
-            val *= grid[r][c]
+            val *= elt
         else:
-            val += grid[r][c]
+            val += elt
+    print(val)
     result += val
+
+for c in range(C):
+    if lines[-1][c] != " ":
+        # New column
+        # Process last accumulated values
+        if c > 0:
+            process_operation()
+
+        # Set the new column
+        operator = lines[-1][c]
+        operands = []
+
+    operand = 0
+    seen = False
+    for r in range(R):
+        if lines[r][c] == " ":
+            continue
+        operand *= 10
+        operand += int(lines[r][c])
+        seen = True
+    if seen:
+        operands.append(operand)
+
+# Process last column
+process_operation()
 
 #################################################################
 # No changes after this line
