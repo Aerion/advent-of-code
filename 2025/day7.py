@@ -34,54 +34,35 @@ grid = [[x for x in line] for line in data.splitlines()]
 R = len(grid)
 C = len(grid[0])
 
-def is_valid(r, c, seen):
-    return 0 <= r < len(grid) and 0 <= c < len(grid[r]) and (r, c) not in seen
+def is_valid(r, c):
+    return 0 <= r < len(grid) and 0 <= c < len(grid[r])
 
-print(grid[0])
 beam_pos = grid[0].index('S')
 
-result = 0
-seen = set()
-split_history = set()
+possibilities_count: dict[tuple[int, int], int] = {}
 
-q = deque()
-q.append((0, beam_pos))
+def explore(r, c):
+    if not is_valid(r, c):
+        return 0
 
-while q:
-    r, c = q.pop()
-    if (r, c) in seen:
-        continue
-    seen.add((r, c))
+    if (r, c) in possibilities_count:
+        return possibilities_count[(r, c)]
 
+    if r == R - 1:
+        # end
+        return 1
     if grid[r][c] == "." or grid[r][c] == "S":
-        # Continue the beam
-        if is_valid(r + 1, c, seen):
-            q.append((r + 1, c))
-        continue
+        possibilities = explore(r + 1, c)
+    elif grid[r][c] == "^":
+        possibilities = explore(r, c + 1) + explore(r, c - 1)
+    else:
+        print(grid[r][c])
+        assert False
+    possibilities_count[(r, c)] = possibilities
+    return possibilities
 
-    assert grid[r][c] == "^"
-    # Split the beam
-    split = False
-    if is_valid(r, c - 1, seen):
-        q.append((r, c - 1))
-        split = True
-    if is_valid(r, c + 1, seen):
-        split = True
-        q.append((r, c + 1))
-    if split:
-        split_history.add((r, c))
-
-for r in range(R):
-    for c in range(C):
-        if (r, c) in split_history:
-            print('x', end='')
-        elif (r, c) in seen:
-            print('|', end='')
-        else:
-            print('.', end='')
-    print()
-
-result = len(split_history)
+explore(0, beam_pos)
+result = possibilities_count[(0, beam_pos)]
 
 #################################################################
 # No changes after this line
