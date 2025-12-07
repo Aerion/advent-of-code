@@ -93,3 +93,19 @@ N/A
 
 - Make sure to understand the edge cases that are presented in the example
 - Take a step back if stuck, clearing the existing implementation isn't a bad thing
+- Visualize the input data by running `aocd` and `less -RS` or `bat -S`
+
+# Day 7
+
+## Part 1
+
+- I made sure to understand exactly where the example result comes from
+- Using `assert` is nice to confirm assumptions about the problem
+
+## Part 2
+
+N/A
+
+## Conclusions
+
+N/A
