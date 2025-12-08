@@ -109,3 +109,21 @@ N/A
 ## Conclusions
 
 N/A
+
+# Day 8
+
+## Part 1
+
+- Using adjacency matrix could be better (but tbd for readability)
+- Lost time with hashes of the dataclass
+
+## Part 2
+
+- Failed unifying the circuits in a "beautiful" manner and resorted to doing a DFS on all the connected ones. Though having the circuitid as a reference could have simplified this
+- Code is not clean
+- Exercise wasn't difficult in itself, I spent most of the time trying to make the circuitid working
+- It seems I tried to implement the idea of Union Find, without knowing it
+
+## Conclusions
+
+- Check out Union Find
