@@ -32,20 +32,28 @@ else:
 # No changes before this line
 #################################################################
 
+@dataclass
+class CircuitId:
+    id_: int
+
+    def __eq__(self, value):
+        return self.id_ == value.id_
+
 @dataclass(unsafe_hash=True)
 class Box:
     x: int
     y: int
     z: int
     connected_to: list[Box] = field(hash=False)
+    circuit_id: Optional[CircuitId] = field(hash=False)
 
     def distance_from(self, other: Box):
         return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2)
 
 boxes: list[Box] = []
-for line in data.splitlines():
+for i, line in enumerate(data.splitlines()):
     x, y, z = line.split(",")
-    box = Box(int(x), int(y), int(z), [])
+    box = Box(int(x), int(y), int(z), [], None)
     boxes.append(box)
 
 distances = [[None] * len(boxes) for _ in range(len(boxes))]
@@ -60,36 +68,68 @@ for i, box in enumerate(boxes):
         distances[j][i] = distance
         indexes.append((i, j))
 
-JUNCTIONS_COUNT = 1000
+circuit_id_count = 0
+existing_circuit_ids = set()
+
+def set_circuit_id(root: Box, id: CircuitId):
+    def set_circuit_id_rec(box: Box):
+        if box in seen:
+            return
+
+        seen.add(box)
+        box.circuit_id = id
+
+        for neighbor in box.connected_to:
+            set_circuit_id_rec(neighbor)
+
+    seen = set()
+    set_circuit_id_rec(box)
+
 indexes.sort(key=lambda elt: distances[elt[0]][elt[1]])
-for i, j in indexes[:JUNCTIONS_COUNT]:
+count = 0
+for i, j in indexes:
+    count += 1
     box = boxes[i]
     other_box = boxes[j]
     box.connected_to.append(other_box)
     other_box.connected_to.append(box)
-    #print(box, other_box, "connected")
 
-def explore_circuit(box: Box, seen: set[Box], circuit: list[Box]):
-    if box in seen:
-        return
+    #print(count)
 
-    seen.add(box)
-    circuit.append(circuit)
+    # One of them has an id
+    if box.circuit_id is None and other_box.circuit_id is not None:
+        set_circuit_id(box, other_box.circuit_id)
+    elif box.circuit_id is not None and other_box.circuit_id is None:
+        set_circuit_id(other_box, box.circuit_id)
+    elif box.circuit_id is None and other_box.circuit_id is None:
+        circuit_id_count += 1
+        box.circuit_id = CircuitId(circuit_id_count)
+        set_circuit_id(other_box, box.circuit_id)
+        existing_circuit_ids.add(circuit_id_count)
+    elif box.circuit_id != other_box.circuit_id:
+        # Two other circuits, unify them
+        #print(existing_circuit_ids)
+        #print(box.circuit_id, other_box.circuit_id)
+        existing_circuit_ids.remove(other_box.circuit_id.id_)
+        set_circuit_id(other_box, box.circuit_id)
 
-    for neighbor in box.connected_to:
-        explore_circuit(neighbor, seen, circuit)
-
-circuits: list[list[Box]] = []
-seen = set()
-for box in boxes:
-    circuit: list[Box] = []
-    explore_circuit(box, seen, circuit)
-    circuits.append(circuit)
-
-circuits.sort(key=lambda c: len(c), reverse=True)
-result = 1
-for circuit in circuits[:3]:
-    result *= len(circuit)
+    circuits_count = set((x.circuit_id.id_ for x in boxes if x.circuit_id))
+    if len(circuits_count) == 1 and all((len(x.connected_to) > 0 for x in boxes)):
+        print("Latest one")
+        print(count, len(indexes))
+        result = box.x * other_box.x
+        break
+    """
+    for b in boxes:
+        for c in b.connected_to:
+            if not b.circuit_id == c.circuit_id:
+                print(b, c)
+            assert b.circuit_id == c.circuit_id
+        if b.circuit_id is not None and b.circuit_id.id_ not in existing_circuit_ids:
+            for bi in boxes:
+                print(bi)
+            assert False
+    """
 
 #################################################################
 # No changes after this line
