@@ -127,3 +127,20 @@ N/A
 ## Conclusions
 
 - Check out Union Find
+
+# Day 9
+
+## Part 1
+
+- For consistency make sure to adapt `r` and `c` to match the `x`, `y` coordinates of the example
+
+## Part 2
+
+- Good thing to test approaches on both the example and the input to fail early if it's too long (e.g. dfs/bfs outside or inside bounds)
+- Tried many approaches that in the end were too long because of iteration over many points
+- I know storing the points is unoptimized, and the result takes 5 min to execute, but I didn't find a better solution
+- Will need to think again about it or to check out other solutions
+
+## Conclusions
+
+- Check out the solutions for this exercise afterwards
