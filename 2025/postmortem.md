@@ -144,3 +144,21 @@ N/A
 ## Conclusions
 
 - Check out the solutions for this exercise afterwards
+
+# Day 10
+
+## Part 1
+
+- Fun to use bitmasks but would have worked just fine in initial implem with lists
+
+## Part 2
+
+- Tried solutions with BFS but couldn't work with input
+- Use `deque.popleft()` instead of `deque.pop()` to do a BFS
+- Unfortunately have to resort to z3 solver, which required to see how to do it
+- Spent a bit of time trying to wrap my head around how to materialize this in a proper equation with z3
+
+## Conclusions
+
+- Keep `popleft` in mind for `deque``
+- Don't be afraid to use `z3` for aoc even if it may be disappointing
