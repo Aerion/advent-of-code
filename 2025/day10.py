@@ -9,8 +9,9 @@ from rich import print
 from sys import stderr
 from typing import Optional
 import time
+import heapq
 
-EXAMPLE_IDX = None
+EXAMPLE_IDX = 0
 _start_time = time.time()
 
 data = (puzzle.examples[EXAMPLE_IDX] if EXAMPLE_IDX is not None else puzzle).input_data
@@ -30,69 +31,45 @@ else:
 # No changes before this line
 #################################################################
 
-def get_min_count(target_indicators: int, buttons: list[int]):
-    q = deque()
-    q.append((0, []))
+def get_min_count(target_joltages: list[int], buttons: list[list[int]]):
+    q = []
+    heapq.heappush(q, (0, [0] * len(target_joltages), []))
 
     while q:
-        indicators, initial_path = q.popleft()
+        initial_distance, initial_joltages, initial_path = heapq.heappop(q)
+        #print(f"{initial_distance=} {initial_joltages=} {initial_path=}")
 
-        for button in buttons:
-            path = initial_path + [button]
+        for button_idx, button in enumerate(buttons):
+            path = initial_path + [button_idx]
+            joltages = initial_joltages[:]
 
-            """
-            for btn_path in path:
-                print(f"{btn_path:b}", end=", ")
-            print()
-            print(f'{indicators=:b} {button=:b}')
-            """
+            too_much = False
+            for key in button:
+                joltages[key] += 1
+                if joltages[key] > target_joltages[key]:
+                    too_much = True
 
-            indicators ^= button
-            if indicators == target_indicators:
-                for btn_path in path:
-                    print(f"{btn_path:b}", end=", ")
-                print()
+            if too_much:
+                continue
+
+            distance = sum((target_joltages[i] - joltages[i]) for i in range(len(target_joltages)))
+            #print(f"{joltages=} {distance}")
+
+            if distance == 0:
                 print(path)
                 return len(path)
-            q.append((indicators, path))
-
-            indicators ^= button
-
-
-def parse_indicators(indicators_str: str):
-    indicators = 0
-    for c in indicators_str:
-        indicators <<= 1
-        indicators |= c == "#"
-    return indicators
-
-def parse_buttons(buttons_str: list[str], indicators_len: int):
-    buttons = []
-
-    for button_str in buttons_str:
-        button = 0
-        for elt in button_str[1:-1].split(","):
-            button |= 1 << (indicators_len - int(elt) - 1)
-        buttons.append(button)
-
-    return buttons
+            heapq.heappush(q, (distance, joltages, path))
 
 result = 0
 for line in data.splitlines():
     elts = line.split(" ")
-    indicators_list = [x == '#' for x in elts[0][1:-1]]
-    indicators = parse_indicators(elts[0][1:-1])
     buttons_list = [[int(i) for i in x[1:-1].split(",")] for x in elts[1:-1]]
-    buttons = parse_buttons(elts[1:-1], len(indicators_list))
+    joltages_list = [int(x) for x in elts[-1][1:-1].split(",")]
 
-    print(f"{indicators=:b}")
-    #print(f"{indicators_list=}")
-    for button in buttons:
-        print(f"{button=:b}", end=", ")
-    print()
-    #print(f"{buttons_list=}")
+    print(f"{buttons_list=}")
+    print(f"{joltages_list=}")
 
-    min_count = get_min_count(indicators, buttons)
+    min_count = get_min_count(joltages_list, buttons_list)
     print(min_count)
     result += min_count
 
