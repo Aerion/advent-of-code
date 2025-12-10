@@ -10,8 +10,9 @@ from sys import stderr
 from typing import Optional
 import time
 import heapq
+from z3 import *
 
-EXAMPLE_IDX = 0
+EXAMPLE_IDX = None
 _start_time = time.time()
 
 data = (puzzle.examples[EXAMPLE_IDX] if EXAMPLE_IDX is not None else puzzle).input_data
@@ -31,46 +32,40 @@ else:
 # No changes before this line
 #################################################################
 
-def get_min_count(target_joltages: list[int], buttons: list[list[int]]):
-    q = []
-    heapq.heappush(q, (0, [0] * len(target_joltages), []))
-
-    while q:
-        initial_distance, initial_joltages, initial_path = heapq.heappop(q)
-        #print(f"{initial_distance=} {initial_joltages=} {initial_path=}")
-
-        for button_idx, button in enumerate(buttons):
-            path = initial_path + [button_idx]
-            joltages = initial_joltages[:]
-
-            too_much = False
-            for key in button:
-                joltages[key] += 1
-                if joltages[key] > target_joltages[key]:
-                    too_much = True
-
-            if too_much:
-                continue
-
-            distance = sum((target_joltages[i] - joltages[i]) for i in range(len(target_joltages)))
-            #print(f"{joltages=} {distance}")
-
-            if distance == 0:
-                print(path)
-                return len(path)
-            heapq.heappush(q, (distance, joltages, path))
-
 result = 0
 for line in data.splitlines():
     elts = line.split(" ")
     buttons_list = [[int(i) for i in x[1:-1].split(",")] for x in elts[1:-1]]
     joltages_list = [int(x) for x in elts[-1][1:-1].split(",")]
 
+    opt = Optimize()
+
+    button_vars = []
+    for i, button in enumerate(buttons_list):
+        var = Int(f'btn_{i}')
+        button_vars.append(var)
+        opt.add(var >= 0)
+    
+    for joltage_i, joltage in enumerate(joltages_list):
+        expr = 0
+        for btn_i, button in enumerate(buttons_list):
+            if joltage_i in button:
+                # This button affects the joltage target
+                expr += button_vars[btn_i]
+        
+        opt.add(joltage == expr)
+
     print(f"{buttons_list=}")
     print(f"{joltages_list=}")
+    opt.minimize(Sum(button_vars))
+    
+    print(opt)
+    assert opt.check() == sat
+    model = opt.model()
 
-    min_count = get_min_count(joltages_list, buttons_list)
-    print(min_count)
+    presses = [model[btn_var].as_long() for btn_var in button_vars]
+    min_count = sum(presses)
+
     result += min_count
 
 #################################################################

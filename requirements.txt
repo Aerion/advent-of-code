@@ -1,2 +1,4 @@
 advent-of-code-data
 rich
+z3
+z3-solver
