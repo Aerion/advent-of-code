@@ -16,7 +16,19 @@ _start_time = time.time()
 data = (puzzle.examples[EXAMPLE_IDX] if EXAMPLE_IDX is not None else puzzle).input_data
 if EXAMPLE_IDX == 0:
     # Override data if needed
-    # data = """REPLACE_ME"""
+    data = """svr: aaa bbb
+aaa: fft
+fft: ccc
+bbb: tty
+tty: ccc
+ccc: ddd eee
+ddd: hub
+hub: fff
+eee: dac
+dac: fff
+fff: ggg hhh
+ggg: out
+hhh: out"""
     pass
 
 print(f"Puzzle #{puzzle.day}", file=stderr)
@@ -57,18 +69,25 @@ for line in data.splitlines():
 with open('/tmp/out.dot', 'w+') as out_f:
     out_f.write(dot_output)
 
+@cache
+def dfs(node_name: str, visited_dac: bool, visited_fft: bool):
+    if node_name == 'out':
+        if visited_dac and visited_fft:
+            return 1
+        return 0
 
-result = 0
-q: deque[Node] = deque()
-q.append(nodes_by_name['you'])
-while q:
-    node = q.popleft()
-    if node.name == 'out':
-        result += 1
-        continue
+    if node_name == 'fft':
+        visited_fft = True
+    if node_name == 'dac':
+        visited_dac = True
 
-    for child in node.children:
-        q.append(child)
+    result = 0
+    for child in nodes_by_name[node_name].children:
+        result += dfs(child.name, visited_dac, visited_fft)
+
+    return result
+
+result = dfs('svr', False, False)
 
 #################################################################
 # No changes after this line
