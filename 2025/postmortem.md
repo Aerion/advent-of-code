@@ -162,3 +162,17 @@ N/A
 
 - Keep `popleft` in mind for `deque``
 - Don't be afraid to use `z3` for aoc even if it may be disappointing
+
+# Day 11
+
+## Part 1
+
+N/A
+
+## Part 2
+
+N/A
+
+## Conclusions
+
+N/A
