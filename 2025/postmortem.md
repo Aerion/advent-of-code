@@ -176,3 +176,13 @@ N/A
 ## Conclusions
 
 N/A
+
+# Day 12
+
+## Part 1
+
+- Checking the input requirements showcases the feasibility
+
+## Conclusions
+
+- Assume that AoC last puzzle is easy to solve, and to check the input for quick win :)
